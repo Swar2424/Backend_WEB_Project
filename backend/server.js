@@ -46,10 +46,7 @@ router.post('/comments', (req, res) => {
   }
   comment.author = author;
   comment.text = text;
-  comment.save(err => {
-    if (err) return res.json({ success: false, error: err });
-    return res.json({ success: true });
-  });
+  comment.save();
 });
 
 
