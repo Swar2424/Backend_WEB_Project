@@ -36,8 +36,8 @@ router.get('/comments', (req, res) => {
 router.post('/comments', (req, res) => {
   const comment = new Comment();
   // body parser lets us use the req.body
-  const { account, mdp } = req.body;
-  if (!account || !mdp) {
+  const { account, email } = req.body;
+  if (!account || !email) {
     // we should throw an error. we can do this check on the front end
     return res.json({
       success: false,
@@ -45,7 +45,8 @@ router.post('/comments', (req, res) => {
     });
   }
   comment.account = account;
-  comment.mdp = mdp;
+  comment.email = email;
+  comment.token = "1924";
   comment.save();
 });
 
