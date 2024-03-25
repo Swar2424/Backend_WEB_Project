@@ -36,16 +36,16 @@ router.get('/comments', (req, res) => {
 router.post('/comments', (req, res) => {
   const comment = new Comment();
   // body parser lets us use the req.body
-  const { author, text } = req.body;
-  if (!author || !text) {
+  const { account, mdp } = req.body;
+  if (!account || !mdp) {
     // we should throw an error. we can do this check on the front end
     return res.json({
       success: false,
       error: 'You must provide an author and comment'
     });
   }
-  comment.author = author;
-  comment.text = text;
+  comment.account = account;
+  comment.mdp = mdp;
   comment.save();
 });
 
