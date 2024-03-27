@@ -24,6 +24,7 @@ app.use(bodyParser.json());
 router.get('/', (req, res) => {
   res.json({ message: 'Hello, World!' });
 });
+
 router.get('/comments', (req, res) => {
   Comment.find()
     .then(comments => {
@@ -33,21 +34,67 @@ router.get('/comments', (req, res) => {
       res.json({ success: false, data: { error: err } });
     });
 });
-router.post('/comments', (req, res) => {
-  const comment = new Comment();
-  // body parser lets us use the req.body
-  const { account, email } = req.body;
-  if (!account || !email) {
-    // we should throw an error. we can do this check on the front end
+
+router.post('/signup', (req, res) => {
+  Comment.find()
+  .then(comments => {
+    const comment = new Comment();
+    const { account, email } = req.body;
+
+    if ((!account || !email) && unused) {
+      return res.json({
+        success: false,
+        error: 'You must provide a username and email address'
+      });
+    }
+    let unused = false
+    for(let i = 0; i < comments.length; i++) {
+      let obj = comments[i];
+      if (obj.account === account || obj.email === email) {
+        return res.json({
+          success: false,
+          error: 'You must provide an unused username and email address'
+        });
+      }
+    }
+    comment.account = account;
+    comment.email = email;
+    comment.token = "1924";
+    comment.save();
     return res.json({
-      success: false,
-      error: 'You must provide an author and comment'
+      success: true,
+      token: "1924"
     });
-  }
-  comment.account = account;
-  comment.email = email;
-  comment.token = "1924";
-  comment.save();
+  })
+});
+
+router.post('/login', (req, res) => {
+  Comment.find()
+  .then(comments => {
+    const { account, mdp } = req.body;
+    if (!account || !mdp) {
+      return res.json({
+        success: false,
+        error: 'You must provide a username and token'
+      });
+    } else {
+      let bool = false
+      for(let i = 0; i < comments.length; i++) {
+      let obj = comments[i];
+      if (obj.account === account && obj.token === mdp) {
+        bool = true
+        return res.json({
+          success: true
+        });}
+      } 
+      if (!bool) {
+        return res.json({
+          success: false,
+          error: 'Authentification failed'
+        });
+      }
+    }
+  })
 });
 
 
