@@ -4,6 +4,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const User = require("./model/user");
 const Comment = require("./model/comment");
 
 // and create our instances
@@ -26,6 +27,11 @@ router.get('/', (req, res) => {
 });
 
 router.get('/comments', (req, res) => {
+  const comment = new Comment();
+  comment.author = "test";
+  comment.text = {cascade : "test2", derp : "test3"};
+  comment.save();
+  
   Comment.find()
     .then(comments => {
       res.json({ success: true, data: comments });
@@ -35,10 +41,20 @@ router.get('/comments', (req, res) => {
     });
 });
 
+router.get('/users', (req, res) => {
+  User.find()
+    .then(users => {
+      res.json({ success: true, data: users });
+    })
+    .catch(err => {
+      res.json({ success: false, data: { error: err } });
+    });
+});
+
 router.post('/signup', (req, res) => {
-  Comment.find()
-  .then(comments => {
-    const comment = new Comment();
+  User.find()
+  .then(userbase => {
+    const user = new User();
     const { account, email } = req.body;
 
     if ((!account || !email) && unused) {
@@ -48,8 +64,8 @@ router.post('/signup', (req, res) => {
       });
     }
     let unused = false
-    for(let i = 0; i < comments.length; i++) {
-      let obj = comments[i];
+    for(let i = 0; i < userbase.length; i++) {
+      let obj = userbase[i];
       if (obj.account === account || obj.email === email) {
         return res.json({
           success: false,
@@ -57,10 +73,10 @@ router.post('/signup', (req, res) => {
         });
       }
     }
-    comment.account = account;
-    comment.email = email;
-    comment.token = "1924";
-    comment.save();
+    user.account = account;
+    user.email = email;
+    user.token = "1924";
+    user.save();
     return res.json({
       success: true,
       token: "1924"
@@ -69,8 +85,8 @@ router.post('/signup', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-  Comment.find()
-  .then(comments => {
+  User.find()
+  .then(userbase => {
     const { account, mdp } = req.body;
     if (!account || !mdp) {
       return res.json({
@@ -79,8 +95,8 @@ router.post('/login', (req, res) => {
       });
     } else {
       let bool = false
-      for(let i = 0; i < comments.length; i++) {
-      let obj = comments[i];
+      for(let i = 0; i < userbase.length; i++) {
+      let obj = userbase[i];
       if (obj.account === account && obj.token === mdp) {
         bool = true
         return res.json({
