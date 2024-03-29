@@ -42,5 +42,6 @@ List of how the database is made
 ---
 
 * Name : "String"       // Project Name
+* Owner : "String"      // Project owner
 * itemList : Map        // List of the items on it
 
