@@ -90,7 +90,23 @@ router.get('/projects', (req, res) => {
     });
 });
 
-router.post('/projects/getProject', (req, res) => {
+router.get('/projects/save', (req, res) => {
+  Project.findOneAndReplace({"_id" : req.body.id},{"_id" : req.body.id,"name" : req.body.name, "owner" : req.body.owner, "itemList": req.body.itemList})
+    .then(projects => {res.json({ success: true});})
+    .catch(err => {res.json({ success: false, data: { error: err } });});
+});
+
+router.get('/projects/delete', (req, res) => {
+  Project.findOneAndDelete({"_id" : req.body.id})
+    .then(result => {
+      res.json({ success: true, data: result});
+    })
+    .catch(err => {
+      res.json({ success: false, data: { error: err } });
+    });
+});
+
+router.post('/projects/getOne', (req, res) => {
   Project.findByID(req.body.id)
     .then(project => {
       res.json({ success: true, data: project });
@@ -101,7 +117,6 @@ router.post('/projects/getProject', (req, res) => {
 });
 
 router.post('/projects/getAll', (req, res) => {
-
   Project.find({owner : req.body.user}, "-owner -itemList")
     .then(user_projects => {
       res.json({ success: true, data: user_projects });
