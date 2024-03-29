@@ -9,8 +9,7 @@ const ProjectsSchema = new Schema({
   owner: String,
   itemList : [{
     name : String,
-    xPos : Number,
-    yPos : Number
+    Pos : Number,
   }]
 });
 
