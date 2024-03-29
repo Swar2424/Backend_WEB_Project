@@ -40,12 +40,14 @@ router.post('/users/signup', (req, res) => {
     .then(users => {
       if (users === null){
         const user = new User();
+        id = new mongoose.Types.ObjectId();
+        user._id = id;
         user.account = req.body.account;
         user.email = req.body.email;
-        user.token = "1924";
+        user.token = id;
         user.save();
 
-        res.json({success: true,token: "1924"});
+        res.json({success: true,token: id});
       } else {
         res.json({ success: false, error: 'You must provide an unused username AND email address'});
       }  
@@ -90,13 +92,13 @@ router.get('/projects', (req, res) => {
     });
 });
 
-router.get('/projects/save', (req, res) => {
+router.post('/projects/save', (req, res) => {
   Project.findOneAndReplace({"_id" : req.body.id},{"_id" : req.body.id,"name" : req.body.name, "owner" : req.body.owner, "itemList": req.body.itemList})
     .then(projects => {res.json({ success: true});})
     .catch(err => {res.json({ success: false, data: { error: err } });});
 });
 
-router.get('/projects/delete', (req, res) => {
+router.post('/projects/delete', (req, res) => {
   Project.findOneAndDelete({"_id" : req.body.id})
     .then(result => {
       res.json({ success: true, data: result});
