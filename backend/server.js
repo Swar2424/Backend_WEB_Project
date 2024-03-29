@@ -1,9 +1,11 @@
 // server.js
 
-// first we import our dependencies…
+// Dependancies
 const express = require("express");
 const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
+const mongoose = require("mongoose");ù
+
+// Schemas
 const User = require("./model/user");
 const Comment = require("./model/comment");
 
@@ -13,6 +15,9 @@ const router = express.Router();
 
 // set our port to either a predetermined port number if you have set it up, or 3001
 const API_PORT = process.env.API_PORT || 3001;
+const URI = ""
+
+// Connect to database
 mongoose.connect("mongodb+srv://Admin:Golmong@web-db.kspqmse.mongodb.net/?retryWrites=true&w=majority&appName=Web-DB");
 var db = mongoose.connection;
 db.on('error', () => console.error('Erreur de connexion'));
@@ -21,17 +26,23 @@ db.on('error', () => console.error('Erreur de connexion'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// now we can set the route path & initialize the API
+// Now we can set the route path & initialize the API
 router.get('/', (req, res) => {
-  res.json({ message: 'Hello, World!' });
+  res.json({ message: 'Server is online' });
 });
 
+// '/comments' nom des méthodes
 router.get('/comments', (req, res) => {
+
+  // On crée un objet du type Schema, on cherche dans la collection qui correspond en minuscule pluriel
   const comment = new Comment();
+
+  // On renseigne les éléments du truc (selon le schéma)
   comment.author = "test";
   comment.text = {cascade : "test2", derp : "test3"};
-  comment.save();
+  comment.save(); // On écrit dans la database
   
+  // Pour envoyer la database, on cherche ce qu'on a mis, si ça y est on envoie au frontend avec res.json
   Comment.find()
     .then(comments => {
       res.json({ success: true, data: comments });
@@ -41,6 +52,7 @@ router.get('/comments', (req, res) => {
     });
 });
 
+// A DELETE OABDUIBAGOBIUAHZDOHBVAIUSOGILDBOUALGDBUIDAJBUKDZVDKLAGDVUOZVODIA
 router.get('/users', (req, res) => {
   User.find()
     .then(users => {
@@ -51,19 +63,21 @@ router.get('/users', (req, res) => {
     });
 });
 
+// On enregistre un boug, pour la postérité y faudrait faire des .catch
 router.post('/signup', (req, res) => {
-  User.find()
+  User.find() // userbase le résultat de la requête
   .then(userbase => {
-    const user = new User();
+    
     const { account, email } = req.body;
 
-    if ((!account || !email) && unused) {
+    if (!account || !email) {
       return res.json({
         success: false,
         error: 'You must provide a username and email address'
       });
     }
-    let unused = false
+
+    // Peut être opti avec un find plus précis (en vrai non)
     for(let i = 0; i < userbase.length; i++) {
       let obj = userbase[i];
       if (obj.account === account || obj.email === email) {
@@ -73,10 +87,13 @@ router.post('/signup', (req, res) => {
         });
       }
     }
+
+    const user = new User();
     user.account = account;
     user.email = email;
     user.token = "1924";
     user.save();
+
     return res.json({
       success: true,
       token: "1924"
@@ -96,12 +113,12 @@ router.post('/login', (req, res) => {
     } else {
       let bool = false
       for(let i = 0; i < userbase.length; i++) {
-      let obj = userbase[i];
-      if (obj.account === account && obj.token === mdp) {
-        bool = true
-        return res.json({
-          success: true
-        });}
+        let obj = userbase[i];
+        if (obj.account === account && obj.token === mdp) {
+          bool = true
+          return res.json({
+            success: true
+          });}
       } 
       if (!bool) {
         return res.json({
@@ -115,6 +132,5 @@ router.post('/login', (req, res) => {
 
 
 // Use our router configuration when we call /api
-app.use('/api', router);
-
+app.use('/db', router);
 app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));
