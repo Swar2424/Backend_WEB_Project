@@ -7,7 +7,8 @@ const mongoose = require("mongoose");ù
 
 // Schemas
 const User = require("./model/user");
-const Comment = require("./model/comment");
+const Item = require("./model/item");
+const Project = require("./model/project");
 
 // and create our instances
 const app = express();
