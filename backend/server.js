@@ -40,8 +40,8 @@ router.post('/users/signup', (req, res) => {
     .then(users => {
       if (users === null){
         const user = new User();
-        user.account = account;
-        user.email = email;
+        user.account = req.body.account;
+        user.email = req.body.email;
         user.token = "1924";
         user.save();
 
@@ -81,6 +81,16 @@ router.post('/items', (req, res) => {
 // Projects
 
 router.get('/projects', (req, res) => {
+  Project.find()
+    .then(projects => {
+      res.json({ success: true, data: projects });
+    })
+    .catch(err => {
+      res.json({ success: false, data: { error: err } });
+    });
+});
+
+router.get('/projects/save', (req, res) => {
   Project.find()
     .then(projects => {
       res.json({ success: true, data: projects });
