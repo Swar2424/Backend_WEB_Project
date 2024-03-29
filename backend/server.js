@@ -34,7 +34,25 @@ router.get('/', (req, res) => {
   res.json({ message: 'Server is online' });
 });
 
-// A DELETE OABDUIBAGOBIUAHZDOHBVAIUSOGILDBOUALGDBUIDAJBUKDZVDKLAGDVUOZVODIA
+// On enregistre un boug, pour la postérité y faudrait faire des .catch
+router.post('/users/signup', (req, res) => {
+  User.exists({account: req.body.account, token: req.body.mdp })
+    .then(users => {
+      if (users === null){
+        const user = new User();
+        user.account = account;
+        user.email = email;
+        user.token = "1924";
+        user.save();
+
+        res.json({success: true,token: "1924"});
+      } else {
+        res.json({ success: false, error: 'You must provide an unused username AND email address'});
+      }  
+    })
+});
+
+// Opti avec une requête visée
 router.post('/users/login', (req, res) => {
   User.exists({account: req.body.account, token: req.body.mdp })
     .then(users => {
@@ -46,77 +64,10 @@ router.post('/users/login', (req, res) => {
     })
 });
 
-// On enregistre un boug, pour la postérité y faudrait faire des .catch
-router.post('/signup', (req, res) => {
-  User.find() // userbase le résultat de la requête
-  .then(userbase => {
-    
-    const { account, email } = req.body;
-
-    if (!account || !email) {
-      return res.json({
-        success: false,
-        error: 'You must provide a username and email address'
-      });
-    }
-
-    // Peut être opti avec un find plus précis (en vrai non)
-    for(let i = 0; i < userbase.length; i++) {
-      let obj = userbase[i];
-      if (obj.account === account || obj.email === email) {
-        return res.json({
-          success: false,
-          error: 'You must provide an unused username and email address'
-        });
-      }
-    }
-
-    const user = new User();
-    user.account = account;
-    user.email = email;
-    user.token = "1924";
-    user.save();
-
-    return res.json({
-      success: true,
-      token: "1924"
-    });
-  })
-});
-
-// Opti avec une requête visée
-router.post('/login', (req, res) => {
-  User.find({account: req.body.account, token: req.body.mdp})
-  .then(userbase => {
-    const { account, mdp } = req.body;
-    if (!account || !mdp) {
-      return res.json({
-        success: false,
-        error: 'You must provide a username and token'
-      });
-    } else {
-      let bool = false
-      for(let i = 0; i < userbase.length; i++) {
-        let obj = userbase[i];
-        if (obj.account === account && obj.token === mdp) {
-          bool = true
-          return res.json({
-            success: true
-          });}
-      } 
-      if (!bool) {
-        return res.json({
-          success: false,
-          error: 'Authentification failed'
-        });
-      }
-    }
-  })
-});
 
 // Items
 
-router.get('/items', (req, res) => {
+router.post('/items', (req, res) => {
   Item.find()
     .then(items => {
       res.json({ success: true, data: items });
@@ -141,7 +92,7 @@ router.get('/projects', (req, res) => {
 
 router.post('/projects/get', (req, res) => {
 
-  Project.find({user: req.owner})
+  Project.find({user: req.body.owner})
     .then(user_projects => {
       res.json({ success: true, data: user_projects });
     })
