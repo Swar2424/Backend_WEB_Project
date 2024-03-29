@@ -6,6 +6,7 @@ const Schema = mongoose.Schema;
 // object that shows the shape of your database entries.
 const ProjectsSchema = new Schema({
   name : String,
+  owner: String,
   itemList : [{
     name : String,
     xPos : Number,
