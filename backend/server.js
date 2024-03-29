@@ -16,7 +16,7 @@ const router = express.Router();
 
 // set our port to either a predetermined port number if you have set it up, or 3001
 const API_PORT = process.env.API_PORT || 3001;
-const mdp = ""
+const mdp = "Golmong1948"
 const URI = `mongodb+srv://Admin:${mdp}@web-db.kspqmse.mongodb.net/?retryWrites=true&w=majority&appName=Web-DB`
 const dbName = "rotonde"
 
@@ -35,24 +35,15 @@ router.get('/', (req, res) => {
 });
 
 // A DELETE OABDUIBAGOBIUAHZDOHBVAIUSOGILDBOUALGDBUIDAJBUKDZVDKLAGDVUOZVODIA
-router.get('/users', (req, res) => {
-  User.find()
+router.post('/users/login', (req, res) => {
+  User.exists({account: req.body.account, token: req.body.mdp })
     .then(users => {
-      res.json({ success: true, data: users });
+      if (users === null){
+        res.json({ success: false, error: 'Authentification failed' });
+      } else {
+        res.json({ success: true});
+      }  
     })
-    .catch(err => {
-      res.json({ success: false, data: { error: err } });
-    });
-});
-
-router.get('/projects', (req, res) => {
-  Project.find()
-    .then(projects => {
-      res.json({ success: true, data: projects });
-    })
-    .catch(err => {
-      res.json({ success: false, data: { error: err } });
-    });
 });
 
 // On enregistre un boug, pour la postérité y faudrait faire des .catch
@@ -95,7 +86,7 @@ router.post('/signup', (req, res) => {
 
 // Opti avec une requête visée
 router.post('/login', (req, res) => {
-  User.find()
+  User.find({account: req.body.account, token: req.body.mdp})
   .then(userbase => {
     const { account, mdp } = req.body;
     if (!account || !mdp) {
@@ -122,6 +113,43 @@ router.post('/login', (req, res) => {
     }
   })
 });
+
+// Items
+
+router.get('/items', (req, res) => {
+  Item.find()
+    .then(items => {
+      res.json({ success: true, data: items });
+    })
+    .catch(err => {
+      res.json({ success: false, data: { error: err } });
+    });
+});
+
+
+// Projects
+
+router.get('/projects', (req, res) => {
+  Project.find()
+    .then(projects => {
+      res.json({ success: true, data: projects });
+    })
+    .catch(err => {
+      res.json({ success: false, data: { error: err } });
+    });
+});
+
+router.post('/projects/get', (req, res) => {
+
+  Project.find({user: req.owner})
+    .then(user_projects => {
+      res.json({ success: true, data: user_projects });
+    })
+    .catch(err => {
+      res.json({ success: false, data: { error: err } });
+    });
+});
+
 
 
 // Use our router configuration when we call /api
