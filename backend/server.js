@@ -92,8 +92,8 @@ router.get('/projects', (req, res) => {
 
 router.post('/projects/getProject', (req, res) => {
   Project.findByID(req.body.id)
-    .then(projects => {
-      res.json({ success: true, data: projects });
+    .then(project => {
+      res.json({ success: true, data: project });
     })
     .catch(err => {
       res.json({ success: false, data: { error: err } });
