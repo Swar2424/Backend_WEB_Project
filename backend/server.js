@@ -90,8 +90,8 @@ router.get('/projects', (req, res) => {
     });
 });
 
-router.get('/projects/save', (req, res) => {
-  Project.find()
+router.post('/projects/getProject', (req, res) => {
+  Project.findByID(req.body.id)
     .then(projects => {
       res.json({ success: true, data: projects });
     })
@@ -100,9 +100,9 @@ router.get('/projects/save', (req, res) => {
     });
 });
 
-router.post('/projects/get', (req, res) => {
+router.post('/projects/getAll', (req, res) => {
 
-  Project.find({user: req.body.owner})
+  Project.find({owner : req.body.user}, "-owner -itemList")
     .then(user_projects => {
       res.json({ success: true, data: user_projects });
     })
