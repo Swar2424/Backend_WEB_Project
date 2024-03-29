@@ -18,3 +18,29 @@ mongosh "mongodb+srv://web-db.kspqmse.mongodb.net/" --apiVersion 1 --username Ad
 
 Launch server :
 npx nodemon .\backend\server.js
+
+
+## Database
+
+List of how the database is made
+
+### Users
+---
+
+* Account : "String"    // Unique username used to login 
+* Email : "String"      // Needs to be a working email (unecessary now)
+* Token : "String"      // Special value generated 
+* Project : "String"    // _id of the project in the project table 
+
+### Items
+---
+
+* Name : "String"       // Item Name
+* Url : "String"        // Item image url
+
+### Projects
+---
+
+* Name : "String"       // Project Name
+* itemList : Map        // List of the items on it
+
