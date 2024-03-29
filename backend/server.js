@@ -3,7 +3,7 @@
 // Dependancies
 const express = require("express");
 const bodyParser = require("body-parser");
-const mongoose = require("mongoose");ù
+const mongoose = require("mongoose");
 
 // Schemas
 const User = require("./model/user");
@@ -16,10 +16,12 @@ const router = express.Router();
 
 // set our port to either a predetermined port number if you have set it up, or 3001
 const API_PORT = process.env.API_PORT || 3001;
-const URI = ""
+const mdp = ""
+const URI = `mongodb+srv://Admin:${mdp}@web-db.kspqmse.mongodb.net/?retryWrites=true&w=majority&appName=Web-DB`
+const dbName = "rotonde"
 
 // Connect to database
-mongoose.connect("mongodb+srv://Admin:Golmong@web-db.kspqmse.mongodb.net/?retryWrites=true&w=majority&appName=Web-DB");
+mongoose.connect(URI, {dbName:dbName});
 var db = mongoose.connection;
 db.on('error', () => console.error('Erreur de connexion'));
 
@@ -32,32 +34,21 @@ router.get('/', (req, res) => {
   res.json({ message: 'Server is online' });
 });
 
-// '/comments' nom des méthodes
-router.get('/comments', (req, res) => {
-
-  // On crée un objet du type Schema, on cherche dans la collection qui correspond en minuscule pluriel
-  const comment = new Comment();
-
-  // On renseigne les éléments du truc (selon le schéma)
-  comment.author = "test";
-  comment.text = {cascade : "test2", derp : "test3"};
-  comment.save(); // On écrit dans la database
-  
-  // Pour envoyer la database, on cherche ce qu'on a mis, si ça y est on envoie au frontend avec res.json
-  Comment.find()
-    .then(comments => {
-      res.json({ success: true, data: comments });
+// A DELETE OABDUIBAGOBIUAHZDOHBVAIUSOGILDBOUALGDBUIDAJBUKDZVDKLAGDVUOZVODIA
+router.get('/users', (req, res) => {
+  User.find()
+    .then(users => {
+      res.json({ success: true, data: users });
     })
     .catch(err => {
       res.json({ success: false, data: { error: err } });
     });
 });
 
-// A DELETE OABDUIBAGOBIUAHZDOHBVAIUSOGILDBOUALGDBUIDAJBUKDZVDKLAGDVUOZVODIA
-router.get('/users', (req, res) => {
-  User.find()
-    .then(users => {
-      res.json({ success: true, data: users });
+router.get('/projects', (req, res) => {
+  Project.find()
+    .then(projects => {
+      res.json({ success: true, data: projects });
     })
     .catch(err => {
       res.json({ success: false, data: { error: err } });
@@ -102,6 +93,7 @@ router.post('/signup', (req, res) => {
   })
 });
 
+// Opti avec une requête visée
 router.post('/login', (req, res) => {
   User.find()
   .then(userbase => {
