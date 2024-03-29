@@ -5,7 +5,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const User = require("./model/user");
-const Comment = require("./model/comment");
+const Item = require("./model/item");
+const Project = require("./model/project");
 
 // and create our instances
 const app = express();
@@ -26,12 +27,11 @@ router.get('/', (req, res) => {
   res.json({ message: 'Hello, World!' });
 });
 
-router.get('/comments', (req, res) => {
+router.get('/items', (req, res) => {
   const comment = new Comment();
   comment.author = "test";
   comment.text = {cascade : "test2", derp : "test3"};
   comment.save();
-  
   Comment.find()
     .then(comments => {
       res.json({ success: true, data: comments });
