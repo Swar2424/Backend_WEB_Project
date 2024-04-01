@@ -36,7 +36,7 @@ router.get('/', (req, res) => {
 
 // On enregistre un boug, pour la postérité y faudrait faire des .catch
 router.post('/users/signup', (req, res) => {
-  User.exists({account: req.body.account, token: req.body.mdp })
+  User.exists({account: req.body.account})
     .then(users => {
       if (users === null){
         const user = new User();
