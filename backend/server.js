@@ -16,129 +16,141 @@ const router = express.Router();
 
 // set our port to either a predetermined port number if you have set it up, or 3001
 const API_PORT = process.env.API_PORT || 3001;
-const mdp = "Golmong1948"
-const URI = `mongodb+srv://Admin:${mdp}@web-db.kspqmse.mongodb.net/?retryWrites=true&w=majority&appName=Web-DB`
-const dbName = "rotonde"
+const mdp = "Golmong1948";
+const URI = `mongodb+srv://Admin:${mdp}@web-db.kspqmse.mongodb.net/?retryWrites=true&w=majority&appName=Web-DB`;
+const dbName = "rotonde";
 
 // Connect to database
-mongoose.connect(URI, {dbName:dbName});
+mongoose.connect(URI, { dbName: dbName });
 var db = mongoose.connection;
-db.on('error', () => console.error('Erreur de connexion'));
+db.on("error", () => console.error("Erreur de connexion"));
 
 // now we should configure the API to use bodyParser and look for JSON data in the request body
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Now we can set the route path & initialize the API
-router.get('/', (req, res) => {
-  res.json({ message: 'Server is online' });
+router.get("/", (req, res) => {
+  res.json({ message: "Server is online" });
 });
 
 // On enregistre un boug, pour la postérité y faudrait faire des .catch
-router.post('/users/signup', (req, res) => {
-  User.exists({account: req.body.account})
-    .then(users => {
-      if (users === null){
-        const user = new User();
-        id = new mongoose.Types.ObjectId();
-        user._id = id;
-        user.account = req.body.account;
-        user.email = req.body.email;
-        user.token = id;
-        user.save();
+router.post("/users/signup", (req, res) => {
+  User.exists({ account: req.body.account }).then((users) => {
+    if (users === null) {
+      const user = new User();
+      id = new mongoose.Types.ObjectId();
+      user._id = id;
+      user.account = req.body.account;
+      user.email = req.body.email;
+      user.token = id;
+      user.save();
 
-        res.json({success: true,token: id});
-      } else {
-        res.json({ success: false, error: 'You must provide an unused username AND email address'});
-      }  
-    })
+      res.json({ success: true, token: id });
+    } else {
+      res.json({
+        success: false,
+        error: "You must provide an unused username AND email address",
+      });
+    }
+  });
 });
 
 // Opti avec une requête visée
-router.post('/users/login', (req, res) => {
-  User.exists({account: req.body.account, token: req.body.mdp })
-    .then(users => {
-      if (users === null){
-        res.json({ success: false, error: 'Authentification failed' });
+router.post("/users/login", (req, res) => {
+  User.exists({ account: req.body.account, token: req.body.mdp }).then(
+    (users) => {
+      if (users === null) {
+        res.json({ success: false, error: "Authentification failed" });
       } else {
-        res.json({ success: true});
-      }  
-    })
+        res.json({ success: true });
+      }
+    },
+  );
 });
-
 
 // Items
 
-router.post('/items', (req, res) => {
+router.post("/items", (req, res) => {
   Item.find()
-    .then(items => {
+    .then((items) => {
       res.json({ success: true, data: items });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({ success: false, data: { error: err } });
     });
 });
-
 
 // Projects
 
-router.get('/projects', (req, res) => {
+router.get("/projects", (req, res) => {
   Project.find()
-    .then(projects => {
+    .then((projects) => {
       res.json({ success: true, data: projects });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({ success: false, data: { error: err } });
     });
 });
 
-router.post('/projects/save', (req, res) => {
-  if (req.body._id == "Null"){
+router.post("/projects/save", (req, res) => {
+  if (req.body._id == "Null") {
     const project = new Project();
     project.name = req.body.name;
     project.owner = req.body.owner;
     project.itemList = req.body.itemList;
     project.save();
-    res.json({success: true});
+    res.json({ success: true, data: { _id: project._id } });
   } else {
-    Project.findOneAndReplace({"_id" : req.body.id},{"_id" : req.body.id,"name" : req.body.name, "owner" : req.body.owner, "itemList": req.body.itemList})
-    .then(projects => {res.json({ success: true});})
-    .catch(err => {res.json({ success: false, data: { error: err } });});
+    Project.findOneAndReplace(
+      { _id: req.body.id },
+      {
+        _id: req.body.id,
+        name: req.body.name,
+        owner: req.body.owner,
+        itemList: req.body.itemList,
+      },
+    )
+      .then((projects) => {
+        res.json({ success: true });
+      })
+      .catch((err) => {
+        res.json({ success: false, data: { error: err } });
+      });
   }
 });
 
-router.post('/projects/delete', (req, res) => {
-  Project.findOneAndDelete({"_id" : req.body.id})
-    .then(result => {
-      res.json({ success: true, data: result});
+router.post("/projects/delete", (req, res) => {
+  Project.findOneAndDelete({ _id: req.body.id })
+    .then((result) => {
+      res.json({ success: true, data: result });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({ success: false, data: { error: err } });
     });
 });
 
-router.post('/projects/getOne', (req, res) => {
+router.post("/projects/getOne", (req, res) => {
   Project.findByID(req.body.id)
-    .then(project => {
+    .then((project) => {
       res.json({ success: true, data: project });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({ success: false, data: { error: err } });
     });
 });
 
-router.post('/projects/getAll', (req, res) => {
-  Project.find({owner : req.body.user}, "-owner -itemList")
-    .then(user_projects => {
+router.post("/projects/getAll", (req, res) => {
+  Project.find({ owner: req.body.user }, "-owner -itemList")
+    .then((user_projects) => {
       res.json({ success: true, data: user_projects });
     })
-    .catch(err => {
+    .catch((err) => {
       res.json({ success: false, data: { error: err } });
     });
 });
 
-
-
 // Use our router configuration when we call /api
-app.use('/db', router);
+app.use("/db", router);
 app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));
+
