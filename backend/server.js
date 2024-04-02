@@ -93,9 +93,18 @@ router.get('/projects', (req, res) => {
 });
 
 router.post('/projects/save', (req, res) => {
-  Project.findOneAndReplace({"_id" : req.body.id},{"_id" : req.body.id,"name" : req.body.name, "owner" : req.body.owner, "itemList": req.body.itemList})
+  if (req.body._id == "Null"){
+    const project = new Project();
+    project.name = req.body.name;
+    project.owner = req.body.owner;
+    project.itemList = req.body.itemList;
+    project.save();
+    res.json({success: true});
+  } else {
+    Project.findOneAndReplace({"_id" : req.body.id},{"_id" : req.body.id,"name" : req.body.name, "owner" : req.body.owner, "itemList": req.body.itemList})
     .then(projects => {res.json({ success: true});})
     .catch(err => {res.json({ success: false, data: { error: err } });});
+  }
 });
 
 router.post('/projects/delete', (req, res) => {
