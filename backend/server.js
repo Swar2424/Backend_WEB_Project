@@ -103,9 +103,9 @@ router.post("/projects/save", (req, res) => {
     res.json({ success: true, data: { _id: project._id } });
   } else {
     Project.findOneAndReplace(
-      { _id: req.body.id },
+      { _id: req.body._id },
       {
-        _id: req.body.id,
+        _id: req.body._id,
         name: req.body.name,
         owner: req.body.owner,
         itemList: req.body.itemList,
@@ -131,7 +131,7 @@ router.post("/projects/delete", (req, res) => {
 });
 
 router.post("/projects/getOne", (req, res) => {
-  Project.findByID(req.body.id)
+  Project.findById(req.body.id)
     .then((project) => {
       res.json({ success: true, data: project });
     })
