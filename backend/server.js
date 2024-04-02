@@ -112,7 +112,7 @@ router.post("/projects/save", (req, res) => {
       },
     )
       .then((projects) => {
-        res.json({ success: true });
+        res.json({ success: true, data: { _id: req.body._id } });
       })
       .catch((err) => {
         res.json({ success: false, data: { error: err } });
